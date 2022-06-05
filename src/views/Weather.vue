@@ -1,10 +1,24 @@
 <template>
     <div class="weather-app">
-        <img src="../assets/bg.jpeg" alt="">
+        <img class="bg-img" src="../assets/bg.jpeg" alt="">
         <div class="weather-wrap">
-        <h1>New York</h1>
+        <h1 class="fw-bold">New York</h1>
 
-        <h1>{{weather.temp}} °C</h1>
+        <div class="weather-temp py-4">{{weather.temp}} °C</div>
+        <div class="d-flex justify-content-between align-items-center col-12">
+            <div>{{format_date(weather.time)}}</div>
+            <div class="d-flex hstack gap-3">
+                <div class="high-temp d-flex">
+                <img class="icon pe-1" src="../assets/weather-elements/high-temperature.png" alt="">
+                <div>{{daily.tempmax[0]}}</div>
+                </div>
+                <div class="high-temp d-flex">
+                <img class="icon pe-1" src="../assets/weather-elements/low-temperature.png" alt="">
+                <div>{{daily.tempmin[0]}}</div>
+                </div>
+            </div>
+        </div>
+        
 
         <p>{{daily.tempmax[0]}}</p>
         <p>{{daily.tempmax[1]}}</p>
@@ -12,18 +26,6 @@
         <ul v-for="max in tempmax" :key="max">
         <li>{{max}}</li>
         </ul>
-        <!--<div class="daysDetail">
-        <span
-          style="display:flex; flex-direction:column; align-items:center; padding-left:10px"
-          v-for="data in seven.list"
-          :key="data">
-        <p>
-          {{data.day}}
-        </p>
-          <p>{{ data.weather[0].main }}</p>
-          <p>{{ parseInt(data.temp.day) }}° / {{ parseInt(data.temp.night) }}°</p>
-        </span>
-      </div>-->
 
         <!--<button @click="getWeather()">click</button>-->
         </div>
@@ -31,26 +33,31 @@
 </template>
 
 <script>
+import moment from 'moment'
+
 export default {
     name : 'Weather',
-    props: ['daily', 'seven'],
     data () {
     return {
       weather: {
         windspeed: '',
         winddirection: '',        
         temp: '',
+        time: '',
         weathercode: '',
       },
       daily: {
-          tempmax: '',
-          tempmin: '',
+          tempmax: '0',
+          tempmin: '0',
       },
-      days: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-      daysIndex: [],
     }
   },
   methods: {
+      format_date(value){
+         if (value) {
+           return moment(String(value)).format('ddd DD MMM, LT')
+          }
+      },
     getWeather: async function () {
       const baseurl = 'https://api.open-meteo.com/v1/forecast?latitude=40.71&longitude=-74.01&hourly=temperature_2m&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset&current_weather=true&timezone=America%2FNew_York'
       const res = await fetch(baseurl)
@@ -58,36 +65,17 @@ export default {
 
       console.log(results)
 
-      this.results = results
-      this.weather.temp = results.current_weather.temperature
-      this.latitude = results.latitude
-      this.longitude = results.longitude
-      this.elevation = results.elevation
+      this.weather.temp = Math.round(results.current_weather.temperature)
+      this.weather.time = results.current_weather.time
 
       this.daily.tempmax = results.daily.temperature_2m_max
+      this.daily.tempmin = results.daily.temperature_2m_min
     },
   },
 
   created(){
     this.getWeather();
-
-    var currentDate = new Date();
-    var nextWeek = new Date(currentDate.getTime() + 7 * 24 * 60 * 60 * 1000);
-    var days = []
-    while (currentDate <= nextWeek) {
-      days.push(new Date(currentDate).getDay());
-      currentDate.setDate(currentDate.getDate() + 1);
-    }
-    this.daysIndex = days.slice(1);
   },
-
-  /*watch:{
-  seven:function(){
-     for (let i = 0; i < this.daysIndex.length; i++) {
-       this.seven.list[i].day = this.days[this.daysIndex[i]]
-    }
-  }
-}*/
 
 }
 </script>
@@ -113,7 +101,10 @@ body {
     align-items: center;
     height: 100vh;
 }
-img{
+.icon{
+    width: 25px;
+}
+.bg-img{
     position: absolute;
     background-position: center;
     width: 100%;
@@ -132,5 +123,8 @@ img{
     padding: 12px 20px;
     border-radius: 25px;
     box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
+}
+.weather-wrap .weather-temp{
+    font-size: 30px;
 }
 </style>

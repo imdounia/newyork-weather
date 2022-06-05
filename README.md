@@ -1,4 +1,4 @@
-Just a simple New York weather app
+## Just a simple New York weather app
 
 ## Project setup
 ```
