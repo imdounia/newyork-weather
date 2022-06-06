@@ -1,4 +1,4 @@
-## Just a simple New York weather app
+## Just a simple New York weather app using Open Meteo API
 
 ## Project setup
 ```

@@ -2,23 +2,55 @@
     <div class="weather-app">
         <img class="bg-img" src="../assets/bg.jpeg" alt="">
         <div class="weather-wrap">
-        <h1 class="fw-bold">New York</h1>
+        <h1 class="fw-bold text-center">New York</h1>
 
-        <div class="weather-temp py-4">{{weather.temp}} °C</div>
+        <div class="weather-temp fs-1 text-center my-4">{{weather.temp}} °C</div>
         <div class="d-flex justify-content-between align-items-center col-12">
-            <div>{{format_date(weather.time)}}</div>
+            <div>{{format_full_date(weather.time)}}</div>
             <div class="d-flex hstack gap-3">
                 <div class="high-temp d-flex">
                 <img class="icon pe-1" src="../assets/weather-elements/high-temperature.png" alt="">
-                <div>{{daily.tempmax[0]}}</div>
+                <div>{{Math.round(daily.tempmax[0])}}</div>
                 </div>
                 <div class="high-temp d-flex">
                 <img class="icon pe-1" src="../assets/weather-elements/low-temperature.png" alt="">
-                <div>{{daily.tempmin[0]}}</div>
+                <div>{{Math.round(daily.tempmin[0])}}</div>
                 </div>
             </div>
         </div>
         
+        <!--hourly temperature-->
+        <div class="fw-bold mt-4 text-start">Hourly temperature</div>    
+        <div class="hourly-temp d-flex justify-content-between align-items-baseline col-12 mt-1">
+            <div class="d-flex flex-column flex-start ps-5 py-3">
+                <div class="py-2 fw-bold" v-for="time in hourly.time.slice(0, 24)" v-bind:key="time.id">
+                        {{format_hour_date(time)}} h
+                </div>
+            </div>    
+            <div class="d-flex flex-column pe-5">
+                <div class="py-2" v-for="temp in hourly.temp.slice(0, 24)" v-bind:key="temp.id">
+                        {{Math.round(temp)}} °C
+                </div>
+            </div>
+        </div>
+
+        <!--<div class="hour d-flex flex-column align-items-center">
+        <div class="hourly-temp d-flex flex-row col-12 hstack gap-3">
+            <div v-for="time in hourly.time.slice(0, 24)" v-bind:key="time.id">      
+                <div>
+                    {{format_hour_date(time)}}
+                </div>
+            </div>
+        </div>
+        <div class="hourly-temp d-flex flex-row col-12 hstack gap-3">
+            <div v-for="temp in hourly.temp.slice(0, 24)" v-bind:key="temp.id">      
+                <div>
+                    {{Math.round(temp)}}
+                </div>
+            </div>
+        </div>
+        </div>-->
+
 
         <p>{{daily.tempmax[0]}}</p>
         <p>{{daily.tempmax[1]}}</p>
@@ -46,6 +78,10 @@ export default {
         time: '',
         weathercode: '',
       },
+      hourly: {
+        time: '',
+        temp: '',
+      },
       daily: {
           tempmax: '0',
           tempmin: '0',
@@ -53,11 +89,16 @@ export default {
     }
   },
   methods: {
-      format_date(value){
-         if (value) {
-           return moment(String(value)).format('ddd DD MMM, LT')
-          }
-      },
+    format_full_date(value){
+        if (value) {
+        return moment(String(value)).format('ddd DD MMM, LT')
+        }
+    },
+    format_hour_date(value){
+        if (value) {
+        return moment(String(value)).format('HH')
+        }
+    },
     getWeather: async function () {
       const baseurl = 'https://api.open-meteo.com/v1/forecast?latitude=40.71&longitude=-74.01&hourly=temperature_2m&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset&current_weather=true&timezone=America%2FNew_York'
       const res = await fetch(baseurl)
@@ -70,6 +111,9 @@ export default {
 
       this.daily.tempmax = results.daily.temperature_2m_max
       this.daily.tempmin = results.daily.temperature_2m_min
+
+      this.hourly.time = results.hourly.time
+      this.hourly.temp = results.hourly.temperature_2m
     },
   },
 
@@ -81,50 +125,5 @@ export default {
 </script>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-body {
-  padding: 0;
-  margin: 0;
-  font-family: 'Poppins', sans-serif;
-  
-}
-.weather-app{
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-.icon{
-    width: 25px;
-}
-.bg-img{
-    position: absolute;
-    background-position: center;
-    width: 100%;
-    height: 100vh;
-    object-fit: cover;
-    filter: brightness(50%);
-}
-.weather-wrap{
-    position: absolute;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 50%;
-    background-color: rgba(250, 235, 215, 0.9);
-    padding: 12px 20px;
-    border-radius: 25px;
-    box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
-}
-.weather-wrap .weather-temp{
-    font-size: 30px;
-}
+@import "../assets/css/style.css";
 </style>
