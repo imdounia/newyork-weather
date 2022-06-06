@@ -2,9 +2,9 @@
     <div class="weather-app">
         <img class="bg-img" src="../assets/bg.jpeg" alt="">
         <div class="weather-wrap">
-        <h1 class="fw-bold text-center">New York</h1>
+        <h1 class="city fw-bold text-center">New York</h1>
 
-        <div class="weather-temp fs-1 text-center my-4">{{weather.temp}} °C</div>
+        <div class="weather-temp fs-1 text-center my-4">{{weather.temp}}°</div>
         <div class="d-flex justify-content-between align-items-center col-12">
             <div>{{format_full_date(weather.time)}}</div>
             <div class="d-flex hstack gap-3">
@@ -51,13 +51,24 @@
         </div>
         </div>-->
 
-
-        <p>{{daily.tempmax[0]}}</p>
-        <p>{{daily.tempmax[1]}}</p>
-        <p>{{daily.tempmax[2]}}</p>
-        <ul v-for="max in tempmax" :key="max">
-        <li>{{max}}</li>
-        </ul>
+        <!--daily temperature -->
+        <div class="fw-bold mt-4 text-start">Temperature in the next three</div> 
+        <div class="daily-temp mt-1">
+            <div class="d-flex flex-column gap-2 justify-content-between">
+                <div class="temp text-center p-3">
+                    <div class="pb-2 fw-bold">{{format_day_date(daily.time[1])}}</div>
+                    <div><img class="icon pe-1" src="../assets/weather-elements/high-temperature.png" alt="">{{Math.round(daily.tempmax[1])}}° / <img class="icon pe-1" src="../assets/weather-elements/low-temperature.png" alt="">{{Math.round(daily.tempmin[1])}}°</div>
+                </div>
+                <div class="temp text-center p-3">
+                    <div class="pb-2 fw-bold">{{format_day_date(daily.time[2])}}</div>
+                    <div><img class="icon pe-1" src="../assets/weather-elements/high-temperature.png" alt="">{{Math.round(daily.tempmax[2])}}° / <img class="icon pe-1" src="../assets/weather-elements/low-temperature.png" alt="">{{Math.round(daily.tempmin[2])}}°</div>
+                </div>
+                <div class="temp text-center p-3">
+                    <div class="pb-2 fw-bold">{{format_day_date(daily.time[3])}}</div>
+                    <div><img class="icon pe-1" src="../assets/weather-elements/high-temperature.png" alt="">{{Math.round(daily.tempmax[3])}}° / <img class="icon pe-1" src="../assets/weather-elements/low-temperature.png" alt="">{{Math.round(daily.tempmin[3])}}°</div>
+                </div>
+            </div>
+        </div>
 
         <!--<button @click="getWeather()">click</button>-->
         </div>
@@ -72,8 +83,7 @@ export default {
     data () {
     return {
       weather: {
-        windspeed: '',
-        winddirection: '',        
+        windspeed: '',       
         temp: '',
         time: '',
         weathercode: '',
@@ -83,8 +93,9 @@ export default {
         temp: '',
       },
       daily: {
-          tempmax: '0',
-          tempmin: '0',
+          tempmax: '',
+          tempmin: '',
+          time: '',
       },
     }
   },
@@ -99,6 +110,11 @@ export default {
         return moment(String(value)).format('HH')
         }
     },
+    format_day_date(value){
+        if (value) {
+        return moment(String(value)).format('dddd')
+        }
+    },
     getWeather: async function () {
       const baseurl = 'https://api.open-meteo.com/v1/forecast?latitude=40.71&longitude=-74.01&hourly=temperature_2m&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset&current_weather=true&timezone=America%2FNew_York'
       const res = await fetch(baseurl)
@@ -111,6 +127,7 @@ export default {
 
       this.daily.tempmax = results.daily.temperature_2m_max
       this.daily.tempmin = results.daily.temperature_2m_min
+      this.daily.time = results.daily.time
 
       this.hourly.time = results.hourly.time
       this.hourly.temp = results.hourly.temperature_2m

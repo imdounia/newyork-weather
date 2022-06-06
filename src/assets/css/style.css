@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Poppins:wght@400;700&display=swap');
 *,
 *::before,
 *::after {
@@ -9,6 +9,9 @@ body {
   margin: 0;
   font-family: 'Poppins', sans-serif;
   
+}
+.city{
+    font-family: 'Abril Fatface', cursive;
 }
 .weather-app{
     position: relative;
@@ -32,13 +35,22 @@ body {
 .weather-wrap{
     position: absolute;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    flex-direction: column; 
     width: 50%;
     background-color: rgba(250, 235, 215, 0.9);
     padding: 12px 20px;
     border-radius: 25px;
     box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
+    height: 80vh;
+    overflow-y: auto;
+}
+.weather-wrap::-webkit-scrollbar {
+    width: 5px;
+}
+.weather-wrap::-webkit-scrollbar-thumb {
+border-radius: 100px;
+background: black;
+box-shadow: inset 2px 2px 5px 0 rgba(#fff, 0.5);
 }
 .hourly-temp{
     background-color: beige;
@@ -59,4 +71,10 @@ border-radius: 100px;
 border-radius: 100px;
 background: black;
 box-shadow: inset 2px 2px 5px 0 rgba(#fff, 0.5);
+}
+
+.daily-temp .temp{
+    background-color: beige;
+    border-radius: 15px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
 }
