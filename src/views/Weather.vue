@@ -52,20 +52,23 @@
         </div>-->
 
         <!--daily temperature -->
-        <div class="fw-bold mt-4 text-start">Temperature in the next three</div> 
+        <div class="fw-bold mt-4 text-start">Temperature in the next three days</div> 
         <div class="daily-temp mt-1">
             <div class="d-flex flex-column gap-2 justify-content-between">
                 <div class="temp text-center p-3">
                     <div class="pb-2 fw-bold">{{format_day_date(daily.time[1])}}</div>
-                    <div><img class="icon pe-1" src="../assets/weather-elements/high-temperature.png" alt="">{{Math.round(daily.tempmax[1])}}° / <img class="icon pe-1" src="../assets/weather-elements/low-temperature.png" alt="">{{Math.round(daily.tempmin[1])}}°</div>
+                    <div class="pb-2"><img class="icon pe-1" src="../assets/weather-elements/high-temperature.png" alt="">{{Math.round(daily.tempmax[1])}}° / <img class="icon pe-1" src="../assets/weather-elements/low-temperature.png" alt="">{{Math.round(daily.tempmin[1])}}°</div>
+                    <div><img class="icon pe-1" src="../assets/weather-elements/sunrise.png" alt="">{{format_hm_date(daily.sunrise[1])}} / <img class="icon pe-1" src="../assets/weather-elements/sunset.png" alt="">{{format_hm_date(daily.sunset[1])}}</div>
                 </div>
                 <div class="temp text-center p-3">
                     <div class="pb-2 fw-bold">{{format_day_date(daily.time[2])}}</div>
-                    <div><img class="icon pe-1" src="../assets/weather-elements/high-temperature.png" alt="">{{Math.round(daily.tempmax[2])}}° / <img class="icon pe-1" src="../assets/weather-elements/low-temperature.png" alt="">{{Math.round(daily.tempmin[2])}}°</div>
+                    <div class="pb-2"><img class="icon pe-1" src="../assets/weather-elements/high-temperature.png" alt="">{{Math.round(daily.tempmax[2])}}° / <img class="icon pe-1" src="../assets/weather-elements/low-temperature.png" alt="">{{Math.round(daily.tempmin[2])}}°</div>
+                    <div><img class="icon pe-1" src="../assets/weather-elements/sunrise.png" alt="">{{format_hm_date(daily.sunrise[2])}} / <img class="icon pe-1" src="../assets/weather-elements/sunset.png" alt="">{{format_hm_date(daily.sunset[2])}}</div>
                 </div>
                 <div class="temp text-center p-3">
                     <div class="pb-2 fw-bold">{{format_day_date(daily.time[3])}}</div>
-                    <div><img class="icon pe-1" src="../assets/weather-elements/high-temperature.png" alt="">{{Math.round(daily.tempmax[3])}}° / <img class="icon pe-1" src="../assets/weather-elements/low-temperature.png" alt="">{{Math.round(daily.tempmin[3])}}°</div>
+                    <div class="pb-2"><img class="icon pe-1" src="../assets/weather-elements/high-temperature.png" alt="">{{Math.round(daily.tempmax[3])}}° / <img class="icon pe-1" src="../assets/weather-elements/low-temperature.png" alt="">{{Math.round(daily.tempmin[3])}}°</div>
+                    <div><img class="icon pe-1" src="../assets/weather-elements/sunrise.png" alt="">{{format_hm_date(daily.sunrise[3])}} / <img class="icon pe-1" src="../assets/weather-elements/sunset.png" alt="">{{format_hm_date(daily.sunset[3])}}</div>
                 </div>
             </div>
         </div>
@@ -96,6 +99,8 @@ export default {
           tempmax: '',
           tempmin: '',
           time: '',
+          sunset: '',
+          sunrise: '',
       },
     }
   },
@@ -115,6 +120,11 @@ export default {
         return moment(String(value)).format('dddd')
         }
     },
+    format_hm_date(value){
+        if (value) {
+        return moment(String(value)).format('LT')
+        }
+    },
     getWeather: async function () {
       const baseurl = 'https://api.open-meteo.com/v1/forecast?latitude=40.71&longitude=-74.01&hourly=temperature_2m&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset&current_weather=true&timezone=America%2FNew_York'
       const res = await fetch(baseurl)
@@ -128,6 +138,8 @@ export default {
       this.daily.tempmax = results.daily.temperature_2m_max
       this.daily.tempmin = results.daily.temperature_2m_min
       this.daily.time = results.daily.time
+      this.daily.sunrise = results.daily.sunrise
+      this.daily.sunset = results.daily.sunset
 
       this.hourly.time = results.hourly.time
       this.hourly.temp = results.hourly.temperature_2m
